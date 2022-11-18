@@ -58,25 +58,24 @@ public class Blackjack {
     }
 
     static String getCard(){
-        String card;
 
-        int tCard = (int)(13*Math.random()+2);
+        int card = (int)(13*Math.random()+2);
 
-        card = Integer.toString(tCard);
 
-        if (card.contains("11")){
-            card = card.replace("11", "Jack");
+        if (card == 11){
+            return "Jack";
         }
-        else if ( card.contains("12")){
-            card = card.replace("12", "Queen");
+        else if ( card == 12){
+            return "Queen";
         }
-        else if (card.contains("13")){
-            card = card.replace("13", "King");
+        else if (card == 13){
+            return "King";
         }
-        else if (card.contains("14")) {
-            card = card.replace("14", "Ace");
+        else if (card == 14) {
+            return "Ace" ;
         }
-
-        return card;
+        else {
+            return Integer.toString(card);
+        }
     }
 }
