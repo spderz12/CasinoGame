@@ -49,15 +49,20 @@ public class Blackjack {
                     if (runningTotal == 21){
                         System.out.println("Blackjack!!! Claim 2x bet - " + wager*2);
                         wager*=2;
+                        running = false;
+                        break;
                     }
+
 
                     //make ace worth 1 or 11 in certain contexts (use if condition "or")
                     while (runningTotal < 21 || runningTotal - (11*altAce) + altAce < 21)//statement eliminate ace value from running total
                     {
                         System.out.println("Hit or Stand?");
                         String ans = scan2.nextLine();
-                        if (ans.equalsIgnoreCase("stand"))
-                            break;//TODO quit the card asking entirely, not just hit stand loop
+                        if (ans.equalsIgnoreCase("stand")) {
+                            running = false;
+                            break;
+                        }
 
                         else if (ans.equalsIgnoreCase("hit")) {//gets another card and assigns value to running total
                             card = getCard();
@@ -76,6 +81,15 @@ public class Blackjack {
                                 runningTotal += cardInt;
                             }
 
+                            if (runningTotal> 21) {
+                                if (runningTotal - (11 * altAce) + altAce <= 21)
+                                    System.out.println("Revised total:" + (runningTotal - (11 * altAce) + altAce));
+                                else
+                                    System.out.println("Total: " + (runningTotal - (11 * altAce) + altAce));
+                            }
+                            else
+                                System.out.println("Total: " + runningTotal);
+
                         }
                         else{System.out.println("Unknown command. Enter Hit or Stand");}
 
@@ -89,10 +103,8 @@ public class Blackjack {
                         }
                     }
                     //TODO add dealer card set to compare to user
-
                     }
                 }
-
             }
         }
 
