@@ -5,10 +5,17 @@ import java.util.HashMap;
 
 public class Blackjack {
     public static final Scanner scan = new Scanner (System.in);
+    public static final Scanner scan2 = new Scanner (System.in);
     public static void play()
     {
        boolean running = true;
-       int altAce = 0;
+       int altAce = 0;//alternate ace value for 1, not 11
+        HashMap<String, Integer> cardValues = new HashMap<>();
+        cardValues.put("Jack", 10);
+        cardValues.put("Queen", 10);
+        cardValues.put("King", 10);
+        cardValues.put("Ace", 11);
+        //convert card names to their values
         System.out.println("<<Blackjack>>");
         System.out.println("What amount will you wager? (Minimum $25)"); //used for winnings later
         while (true) {
@@ -27,35 +34,68 @@ public class Blackjack {
                         if (card.equals("Ace")) {
                             altAce += 1;//alternate ace for multiple value task
                         }
-                    }
+
 
                     System.out.println("You drew: " + card);
 
-                    HashMap<String, Integer> cardValues = new HashMap<>();
-                    cardValues.put("Jack", 10);
-                    cardValues.put("Queen", 10);
-                    cardValues.put("King", 10);
-                    cardValues.put("Ace", 11);
-                    //assigning hashmap to change card names to number values
                     if (cardValues.containsKey(card)) {
                         runningTotal += cardValues.get(card); //To avoid error, checks if card is in hashmap
-                    }
-                    else {
+                    } else {
                         int cardInt = Integer.parseInt(card);
                         runningTotal += cardInt;
                     }
+                }
                     System.out.println("total = " + runningTotal);
-                   //TODO show current card values and also alternative if ace present (altAce >= 1)
-                    //TODO make ace worth 1 or 11 in certain contexts (use if condition "or")
-                    System.out.println("again?");
-                    String ans = scan.nextLine();
-                    if (ans.equals("no"))
-                    break;
+                    if (runningTotal == 21){
+                        System.out.println("Blackjack!!! Claim 2x bet - " + wager*2);
+                        wager*=2;
+                    }
+
+                    //make ace worth 1 or 11 in certain contexts (use if condition "or")
+                    while (runningTotal < 21 || runningTotal - (11*altAce) + altAce < 21)//statement eliminate ace value from running total
+                    {
+                        System.out.println("Hit or Stand?");
+                        String ans = scan2.nextLine();
+                        if (ans.equalsIgnoreCase("stand"))
+                            break;//TODO quit the card asking entirely, not just hit stand loop
+
+                        else if (ans.equalsIgnoreCase("hit")) {//gets another card and assigns value to running total
+                            card = getCard();
+
+                            if (card.equals("Ace")) {
+                                altAce += 1;//alternate ace for multiple value task
+                            }
+
+
+                            System.out.println("You drew: " + card);
+
+                            if (cardValues.containsKey(card)) {
+                                runningTotal += cardValues.get(card); //To avoid error, checks if card is in hashmap
+                            } else {
+                                int cardInt = Integer.parseInt(card);
+                                runningTotal += cardInt;
+                            }
+
+                        }
+                        else{System.out.println("Unknown command. Enter Hit or Stand");}
+
+                        if (runningTotal == 21 || runningTotal-(11*altAce)+altAce == 21){
+                            System.out.println("You win!");//remember to make black jack boolean true so dealer automatically loses
+                            running = false;
+                        }
+                        else if (runningTotal > 21 && runningTotal-(11*altAce)+altAce > 21){
+                            System.out.println("Bust!! You lose!");
+                            running = false;
+                        }
+                    }
+                    //TODO add dealer card set to compare to user
+
+                    }
                 }
 
             }
         }
-    }
+
 
     static String getCard(){
 
