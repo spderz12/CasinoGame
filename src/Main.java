@@ -8,7 +8,7 @@ public class Main {
         System.out.println("<<CASINO>>");
         System.out.println("What would you like to do?\n(For a command list, type help)");
         while (true){
-            String ans = scan.nextLine();
+            String ans = scan.nextLine().replaceAll(" ", "");
 
             if (ans.equalsIgnoreCase("blackjack")){
                 //blackjack class
