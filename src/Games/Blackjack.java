@@ -17,6 +17,7 @@ public class Blackjack {
     {
         boolean userWin = false;
        boolean running = true;
+       boolean userBust = false;
        int altAce = 0;//alternate ace value for 1, not 11
         cardValues.put("Jack", 10);
         cardValues.put("Queen", 10);
@@ -74,6 +75,10 @@ public class Blackjack {
                         String ans = scan2.nextLine();
                         if (ans.equalsIgnoreCase("stand")) {
                             running = false;
+                            try{
+                                Thread.sleep(2000);}
+                            catch (Exception e){}
+
                             break;
                         }
 
@@ -82,6 +87,12 @@ public class Blackjack {
 
                             if (card.equals("Ace")) {
                                 altAce += 1;//alternate ace for multiple value task
+                            }
+
+                            if (altAce > 1){
+                                if ((altAce-1) * 11 + runningTotal > altAce*11 +runningTotal && (altAce-1) * 11 + runningTotal < 22 ){
+                                    altAce--;
+                                }
                             }
 
 
@@ -107,14 +118,19 @@ public class Blackjack {
                         else{System.out.println("Unknown command. Enter Hit or Stand");}
 
                         if (runningTotal == 21 || runningTotal-(11*altAce)+altAce == 21){
-                            System.out.println("You reached 21!");//remember to make black jack boolean true so dealer automatically loses
+                            System.out.println("You reached 21!");
                            userWin = true;
                             running = false;
                             break;
                         }
                         else if (runningTotal > 21 && runningTotal-(11*altAce)+altAce > 21){
                             System.out.println("Bust!! You lose!");
+                            userBust = true;
                             running = false;
+                            try{
+                            Thread.sleep(2000);}
+                            catch (Exception e){}
+                            //TODO stop program for 2 seconds
                             break;
                         }
                     }
@@ -127,31 +143,33 @@ public class Blackjack {
                             System.out.println("You got 21 and beat the dealer. Congrats!");
                             //sum increase add above
                         }
-                        else if (dealerWin && userWin){
+                        else if ((dealerWin && userWin)|| dealerTotal == runningTotal || dealerTotal - (11*dealerAltAce) + dealerAltAce == runningTotal - (11*altAce)+ altAce){
                             System.out.println("You and the dealer tied. Collect 50%");
                             wager*=0.5;
-                        }
-                        else if ((((dealerTotal > 21 && dealerAltAce == 0) || (dealerTotal - (11 * dealerAltAce) + dealerAltAce) > 21))  && ((runningTotal > 21 || runningTotal - (11 * altAce) + altAce > 21 ))){
-                            System.out.println("Nobody won. Keep your cash.");
-                        }
-                        else if (dealerWin && !userWin){
-                            System.out.println("Dealer beat you. :(");
                         }
                         else if ((dealerTotal > 21 || (dealerTotal - (11 * dealerAltAce) + dealerAltAce) > 21) && (runningTotal <= 21 || (runningTotal - (11 * altAce) + altAce <= 21))){
                             System.out.println("dealer went bust. you win");
                             //TODO change wager balance
                         }
-                        else if (dealerTotal > runningTotal && (runningTotal - (11 * altAce) + altAce) < (dealerTotal - (11 * dealerAltAce) + dealerAltAce)){
+                        else if((runningTotal > dealerTotal && runningTotal < 22)|| runningTotal-(11*altAce)+altAce > dealerTotal - (11*dealerAltAce) + dealerAltAce && runningTotal-(11*altAce)+altAce < 22 ){
+                            System.out.println("You got a higher score than the dealer");
+                        }
+                        else if ((dealerWin && userBust) || userBust && dealerTotal < 21 || (dealerTotal - (11 * dealerAltAce) + dealerAltAce) < 21){
+                            System.out.println("Dealer beat you. :(");
+                        }
+
+                        else if ((dealerTotal > runningTotal && dealerTotal < 21) || ((runningTotal - (11 * altAce) + altAce) < (dealerTotal - (11 * dealerAltAce) + dealerAltAce))){
                             System.out.println("Dealer had a higher score. Dealer wins");
                             //Make wager balance 0
                         }
                         else{
-                            System.out.println("You got a higher score than the dealer. You won!");
+                                System.out.println("Nobody won. Keep your cash.");
+                            }
                         }
                        //user has higher count than dealer
                 }
             }
-        }
+
 
 
     static String getCard(){
@@ -200,21 +218,29 @@ public class Blackjack {
         } else
             System.out.println("Total: " + dealerTotal);
 
+        try{
+            Thread.sleep(2000);}
+        catch (Exception e){}
+
         if (dealerTotal == 21) {
             System.out.println("Dealer has a blackjack!");
             dealerWin = true;
         } else if (dealerTotal >= 17) {
             System.out.println("Dealer stands at 17 and above");
-            //TODO return card value for comparison
         } else {
             while (dealerTotal < 17 || dealerTotal - (11 * dealerAltAce) + dealerAltAce < 17) {
                 card = getCard();
+
                 System.out.println("Dealer picked up: " + card);
 
                 if (card.equals("Ace")) {
                     dealerAltAce += 1;
                 }
-
+                if (dealerAltAce > 1){
+                    if ((dealerAltAce-1) * 11 + dealerTotal > dealerAltAce*11 +dealerTotal && (dealerAltAce-1) * 11 + dealerTotal < 22 ){
+                        dealerAltAce--;
+                    }
+                }
                 if (cardValues.containsKey(card)) {
                     dealerTotal += cardValues.get(card);
                 } else {
@@ -231,7 +257,9 @@ public class Blackjack {
                     System.out.println("Total: " + dealerTotal);
                 }
             }
-
+            try{
+                Thread.sleep(2000);}
+            catch (Exception e){}
                 if (dealerTotal > 21 && dealerTotal - (11 * dealerAltAce) + dealerAltAce > 21) {
                     System.out.println("Dealer went bust!");
                 } else if (dealerTotal == 21 || dealerTotal - (11 * dealerAltAce) + dealerAltAce == 21) {
