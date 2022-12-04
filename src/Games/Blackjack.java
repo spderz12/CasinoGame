@@ -1,5 +1,6 @@
 package Games;
 
+
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.HashMap;
@@ -10,15 +11,26 @@ public class Blackjack {
 
     static int dealerAltAce = 0;
     static boolean dealerWin = false;
+
+    static boolean ans = false;
     static int dealerTotal = 0;
     static HashMap<String, Integer> cardValues = new HashMap<>();/*static so other methods
     can access*/
 
     static ArrayList<Integer> cardDeck = new ArrayList<>();
-
+    static void cardCreate(){  for(int i = 2; i < 15; i++){
+        for(int k = 0; k < 4; k++){
+            cardDeck.add(i);
+        }
+    }
+        //creates deck of cards for get card method
+        }
 
     public static void play()
     {
+        cardDeck.clear();
+        cardCreate();
+
         boolean userWin = false;
        boolean running = true;
        boolean userBust = false;
@@ -29,12 +41,7 @@ public class Blackjack {
         cardValues.put("Ace", 11);
 
         //convert card names to their values
-        for(int i = 2; i < 15; i++){
-            for(int k = 0; k < 4; k++){
-                cardDeck.add(i);
-            }
-        }
-        //creates deck of cards for get card method
+
         System.out.println("<<Blackjack>>");
         System.out.println("What amount will you wager? (Minimum $25)"); //used for winnings later
         while (true) {
@@ -44,7 +51,9 @@ public class Blackjack {
             else {
                 //TODO Subtract bet from user balance
                 int runningTotal = 0;//check to see if 21 is reached
-
+                altAce = 0;
+                userWin = false;
+                userBust = false;
                 while (running) {
 
                     String card = null;
@@ -154,6 +163,9 @@ public class Blackjack {
                             System.out.println("You got 21 and beat the dealer. Congrats!");
                             //sum increase add above
                         }
+                        else if(dealerWin && !userWin){
+                            System.out.println("Dealer reached 21 and beat you! :(");
+                        }
                         else if ((dealerWin && userWin)|| dealerTotal == runningTotal || dealerTotal - (11*dealerAltAce) + dealerAltAce == runningTotal - (11*altAce)+ altAce){
                             System.out.println("You and the dealer tied. Collect 50%");
                             wager*=0.5;
@@ -176,20 +188,33 @@ public class Blackjack {
                         else{
                                 System.out.println("Nobody won. Keep your cash.");
                             }
+                        while(!ans){
+                            System.out.println("\nPlay Again? y/n");
+                            String next = scan2.nextLine();
+                            if (next.equalsIgnoreCase("y")){
+                                play();}//TODO revert running totals to 0
+                            else if (next.equalsIgnoreCase("n")) {
+                                System.out.println("Returning to menu...");
+                                //TODO return to menu
+                            }
+                            else{
+                                System.out.println("enter valid choice");}
+
+                        }
+                        }
+
                         }
                        //user has higher count than dealer
                 }
-            }
 
 
 
     static String getCard(){
 
-        int random = (int)((cardDeck.size()+1)*Math.random());
+        int random = (int)((cardDeck.size()-1)*Math.random());
         int card = cardDeck.get(random);
 
         cardDeck.remove(random);
-
 
         if (card == 11){
             return "Jack";
@@ -210,9 +235,13 @@ public class Blackjack {
 
     static void dealerGame() {
         String card;
+        dealerTotal = 0;
+        dealerAltAce=0;
+        dealerWin=false;
 
         for (int i = 0; i < 2; i++) {
             card = getCard();
+
             if (card.equals("Ace")) {
                 dealerAltAce += 1;
             }
@@ -239,7 +268,7 @@ public class Blackjack {
         if (dealerTotal == 21) {
             System.out.println("Dealer has a blackjack!");
             dealerWin = true;
-        } else if (dealerTotal >= 17) {
+        } else if (dealerTotal >= 17|| dealerTotal-(11*dealerAltAce)+dealerAltAce >=17) {
             System.out.println("Dealer stands at 17 and above");
         } else {
             while (dealerTotal < 17 || dealerTotal - (11 * dealerAltAce) + dealerAltAce < 17) {
